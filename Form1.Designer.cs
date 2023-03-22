@@ -31,6 +31,7 @@
             textBox1 = new TextBox();
             button1 = new Button();
             TimeUnitUpDown = new DomainUpDown();
+            button2 = new Button();
             SuspendLayout();
             // 
             // textBox1
@@ -60,11 +61,21 @@
             TimeUnitUpDown.TabIndex = 2;
             TimeUnitUpDown.SelectedItemChanged += TimeUnitItemChanged;
             // 
+            // button2
+            // 
+            button2.Location = new Point(301, 335);
+            button2.Name = "button2";
+            button2.Size = new Size(181, 48);
+            button2.TabIndex = 3;
+            button2.Text = "Excel로 변환";
+            button2.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button2);
             Controls.Add(TimeUnitUpDown);
             Controls.Add(button1);
             Controls.Add(textBox1);
@@ -80,5 +91,6 @@
         private Button button1;
         private DomainUpDown TimeUnitUpDown;
         public string[] m_str_time_unit = { "15 min", "30 min", "60 min" };
+        private Button button2;
     }
 }
