@@ -8,5 +8,9 @@ namespace LTH
 {
     internal class Excel_io
     {
+        void create_file(string file_name)
+        {
+
+        }
     }
 }
