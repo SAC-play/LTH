@@ -57,7 +57,7 @@ namespace LTH
 
             m_file_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + file_path_and_name;
 
-            wb.SaveAs2(m_file_name);
+            wb.SaveAs(m_file_name);
 
             Marshal.ReleaseComObject(ws);
             Marshal.ReleaseComObject(worksheets);
