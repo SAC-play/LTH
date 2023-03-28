@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Markup;
 
 namespace LTH
 {
@@ -33,17 +34,27 @@ namespace LTH
 
         private void on_tick(Object source, ElapsedEventArgs e)
         {
+            //Console.WriteLine("begin time : " + m_begin_time.ToString());
             //Console.WriteLine("end time : " + m_end_time.ToString());
 
             if (e.SignalTime.Hour == m_end_time.Hour &&
                 e.SignalTime.Minute == m_end_time.Minute)
             {
-                //Console.WriteLine("Elapsed~~");
+                if (this.m_elapsed != null)
+                {
+                    m_elapsed(this, EventArgs.Empty);
+                }
 
-                m_begin_time  = e.SignalTime;
+                //modify begin and end time
+
+                if(m_bChangeBeginTime)
+                {
+                    m_begin_time = e.SignalTime;
+                }
+
                 m_end_time = e.SignalTime.AddMinutes(m_dTime_unit);
 
-                m_timer.Start();
+                m_bChangeBeginTime = false;
             }
         }
 
@@ -109,9 +120,21 @@ namespace LTH
             set => m_end_time = value;
         }
 
+        public void add_elapsed_handler(EventHandler ev)
+        {
+            m_elapsed += ev;
+        }
+
+        public bool ChangeBeginTIme
+        {
+            set => m_bChangeBeginTime = value;
+        }
+
         double m_dTime_unit = 0;
-        System.Timers.Timer m_timer = new System.Timers.Timer(10000); //1 min
+        System.Timers.Timer m_timer = new System.Timers.Timer(1000); //1 min
         private DateTime m_begin_time;
         private DateTime m_end_time;
+        private event EventHandler m_elapsed;
+        private bool m_bChangeBeginTime = false;
     }
 }
