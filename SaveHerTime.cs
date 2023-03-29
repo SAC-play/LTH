@@ -66,7 +66,6 @@ namespace LTH
             {
                 if(dt.Minute >=0 && dt.Minute < 15)
                 {
-
                     m_begin_time = new DateTime(dt.Year,dt.Month,dt.Day,9,0,0);
                     m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour,0,0);
                     m_end_time = m_end_time.AddMinutes(m_dTime_unit);
@@ -96,6 +95,43 @@ namespace LTH
                 m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
                 m_end_time = m_end_time.AddMinutes(m_dTime_unit);
             }
+        }
+
+        public DateTime find_monday_date()
+        {
+            DateTime dt_now = DateTime.Now;
+            DateTime monday_dt;
+
+            if(dt_now.DayOfWeek == DayOfWeek.Monday)
+            {
+                monday_dt = dt_now;
+            }
+            else if(dt_now.DayOfWeek == DayOfWeek.Tuesday)
+            {
+                monday_dt = dt_now.AddDays(-1);
+            }
+            else if (dt_now.DayOfWeek == DayOfWeek.Wednesday)
+            {
+                monday_dt = dt_now.AddDays(-2);
+            }
+            else if (dt_now.DayOfWeek == DayOfWeek.Thursday)
+            {
+                monday_dt = dt_now.AddDays(-3);
+            }
+            else if (dt_now.DayOfWeek == DayOfWeek.Friday)
+            {
+                monday_dt = dt_now.AddDays(-4);
+            }
+            else if (dt_now.DayOfWeek == DayOfWeek.Saturday)
+            {
+                monday_dt = dt_now.AddDays(-5);
+            }
+            else //Sunday
+            {
+                monday_dt = dt_now.AddDays(-6);
+            }
+
+            return monday_dt;
         }
 
         public void stop_timer()
