@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using System.Windows.Markup;
 
 namespace LTH
 {
-    class SaveHerTime
+    public class SaveHerTime
     {
         public void set_time_unit(double time_unit)
         {
@@ -34,11 +35,16 @@ namespace LTH
 
         private void on_tick(Object source, ElapsedEventArgs e)
         {
+            //string begin_end_time = "begin time : " + m_begin_time.ToString() + ", end time : " + m_end_time.ToString();
+            //string elapseTIme_time = "elapse time : " + e.SignalTime.ToString();
+
             //Console.WriteLine("begin time : " + m_begin_time.ToString());
             //Console.WriteLine("end time : " + m_end_time.ToString());
 
-            if (e.SignalTime.Hour == m_end_time.Hour &&
-                e.SignalTime.Minute == m_end_time.Minute)
+            //MessageBox.Show("[on_tick]\n" + begin_end_time+"\n"+elapseTIme_time);
+
+            if (e.SignalTime.Hour >= m_end_time.Hour &&
+                e.SignalTime.Minute >= m_end_time.Minute)
             {
                 if (this.m_elapsed != null)
                 {
@@ -49,10 +55,10 @@ namespace LTH
 
                 if(m_bChangeBeginTime)
                 {
-                    m_begin_time = e.SignalTime;
+                    m_begin_time = m_end_time;
                 }
 
-                m_end_time = e.SignalTime.AddMinutes(m_dTime_unit);
+                m_end_time = m_end_time.AddMinutes(m_dTime_unit);
 
                 m_bChangeBeginTime = false;
             }
@@ -156,6 +162,11 @@ namespace LTH
             set => m_end_time = value;
         }
 
+        public double TimeUnit
+        {
+            get => m_dTime_unit;
+        }
+
         public void add_elapsed_handler(EventHandler ev)
         {
             m_elapsed += ev;
@@ -167,7 +178,7 @@ namespace LTH
         }
 
         double m_dTime_unit = 0;
-        System.Timers.Timer m_timer = new System.Timers.Timer(1000); //1 min
+        System.Timers.Timer m_timer = new System.Timers.Timer(60000); //1 min
         private DateTime m_begin_time;
         private DateTime m_end_time;
         private event EventHandler m_elapsed;
