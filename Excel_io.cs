@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Office.Interop.Excel;
 
 namespace LTH
 {
-    class Excel_io
+    public class Excel_io
     {
         public struct excel_io_data
         {
@@ -19,7 +17,7 @@ namespace LTH
 
         public string create_file(string file_path_and_name)
         {
-            Application excelApp = new Application();
+            Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
 
             if (excelApp == null )
             {
@@ -48,7 +46,7 @@ namespace LTH
             // if not, interop remains in backround process
 #if true
             var worksheets = wb.Worksheets;
-            _Worksheet ws = worksheets[1];
+            Microsoft.Office.Interop.Excel._Worksheet ws = worksheets[1];
 #else
             _Worksheet workSheet = wb.Worksheets[1];
 #endif
@@ -108,7 +106,7 @@ namespace LTH
 
         public bool sync_data()
         {
-            Application excelApp = new Application();
+            Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
 
             if (excelApp == null)
             {
@@ -127,7 +125,7 @@ namespace LTH
             var wb = workbooks.Open(m_file_name);
 
             var worksheets = wb.Worksheets;
-            _Worksheet ws = worksheets[1];
+            Microsoft.Office.Interop.Excel._Worksheet ws = worksheets[1];
 
             if(ws == null)
             {
