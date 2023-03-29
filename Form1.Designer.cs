@@ -1,5 +1,9 @@
 ﻿namespace LTH
 {
+    static class Global
+    {
+        public static TextBox text_preiod;
+    }
     partial class Form1
     {
         /// <summary>
@@ -32,6 +36,7 @@
             button1 = new Button();
             TimeUnitUpDown = new DomainUpDown();
             button2 = new Button();
+            Global.text_preiod = new TextBox();
             SuspendLayout();
             // 
             // textBox1
@@ -54,7 +59,11 @@
             // 
             // TimeUnitUpDown
             // 
-            TimeUnitUpDown.Location = new Point(133, 100);
+            TimeUnitUpDown.BackColor = SystemColors.Control;
+            TimeUnitUpDown.Items.Add("15 min");
+            TimeUnitUpDown.Items.Add("30 min");
+            TimeUnitUpDown.Items.Add("60 min");
+            TimeUnitUpDown.Location = new Point(133, 106);
             TimeUnitUpDown.Name = "TimeUnitUpDown";
             TimeUnitUpDown.ReadOnly = true;
             TimeUnitUpDown.Size = new Size(141, 23);
@@ -63,18 +72,28 @@
             // 
             // button2
             // 
-            button2.Location = new Point(301, 335);
+            button2.Location = new Point(312, 223);
             button2.Name = "button2";
             button2.Size = new Size(181, 48);
             button2.TabIndex = 3;
             button2.Text = "Excel로 변환";
             button2.UseVisualStyleBackColor = true;
             // 
+            // text_preiod
+            // 
+            Global.text_preiod.BackColor = SystemColors.Control;
+            Global.text_preiod.Location = new Point(133, 135);
+            Global.text_preiod.Name = "text_preiod";
+            Global.text_preiod.ReadOnly = true;
+            Global.text_preiod.Size = new Size(256, 23);
+            Global.text_preiod.TabIndex = 4;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(Global.text_preiod);
             Controls.Add(button2);
             Controls.Add(TimeUnitUpDown);
             Controls.Add(button1);
@@ -90,7 +109,7 @@
         private TextBox textBox1;
         private Button button1;
         private DomainUpDown TimeUnitUpDown;
-        public string[] m_str_time_unit = { "15 min", "30 min", "60 min" };
+        public UInt16[] m_dTime_unit = { 15, 30, 60 };
         private Button button2;
     }
 }
