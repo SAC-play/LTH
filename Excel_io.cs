@@ -12,7 +12,7 @@ namespace LTH
         {
             public int nRow;
             public string strColumn;
-            public string strData;
+            public List<string> list_datas;
             public Microsoft.Office.Interop.Excel.XlRgbColor rgb_color;
         }
 
@@ -78,29 +78,22 @@ namespace LTH
             return m_file_name;
         }
 
-        public void set_data(int row, string column, string data, Microsoft.Office.Interop.Excel.XlRgbColor parameter_color = Microsoft.Office.Interop.Excel.XlRgbColor.rgbWhite)
+        public void set_data(int row, string column, string strData, Microsoft.Office.Interop.Excel.XlRgbColor parameter_color = Microsoft.Office.Interop.Excel.XlRgbColor.rgbWhite)
         {
             var dict_key = (row.ToString() + column);
 
             if (m_dict_data.ContainsKey(dict_key))
             {
-                excel_io_data stData;
-                stData.nRow = row;
-                stData.strColumn = column;
-                stData.rgb_color = parameter_color;
-
-                string total_str = m_dict_data[dict_key].strData + "\n" + data;
-
-                stData.strData = total_str;
-
-                m_dict_data[dict_key] = stData;
+                var stData = m_dict_data[dict_key];
+                stData.list_datas.Add(strData);
             }
             else
             {
                 excel_io_data stData;
                 stData.nRow = row;
                 stData.strColumn = column;
-                stData.strData = data;
+                stData.list_datas = new List<string>();
+                stData.list_datas.Add(strData);
                 stData.rgb_color = parameter_color;
 
                 m_dict_data.Add(dict_key, stData);
@@ -155,7 +148,18 @@ namespace LTH
                     excel_io_data stData = m_dict_data[key_item];
 
                     cells[stData.nRow, stData.strColumn].Interior.Color = stData.rgb_color;
-                    cells[stData.nRow, stData.strColumn] = stData.strData;
+
+                    string str_value = "";
+                    for(int idx = 0; idx < stData.list_datas.Count; idx++)
+                    {
+                        if(idx != 0)
+                        {
+                            str_value += "\n";
+                        }
+
+                        str_value += stData.list_datas[idx];
+                    }
+                    cells[stData.nRow, stData.strColumn] = str_value;
                 }
 
                 Marshal.ReleaseComObject(cells);
@@ -214,9 +218,9 @@ namespace LTH
             return true;
         }
 
-        public Dictionary<string, excel_io_data> get_data()
+        public Dictionary<string, excel_io_data> DictData
         {
-            return m_dict_data;
+            get => m_dict_data;
         }
 
         private Dictionary<string, excel_io_data> m_dict_data = new Dictionary<string, excel_io_data>();
