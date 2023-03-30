@@ -31,7 +31,7 @@
             textBox1 = new TextBox();
             button1 = new Button();
             TimeUnitUpDown = new DomainUpDown();
-            button2 = new Button();
+            ExcelConvertButton = new Button();
             text_preiod = new TextBox();
             SuspendLayout();
             // 
@@ -56,24 +56,27 @@
             // TimeUnitUpDown
             // 
             TimeUnitUpDown.BackColor = SystemColors.Control;
-            TimeUnitUpDown.Items.Add("15 min");
-            TimeUnitUpDown.Items.Add("30 min");
             TimeUnitUpDown.Items.Add("60 min");
+            TimeUnitUpDown.Items.Add("30 min");
+            TimeUnitUpDown.Items.Add("15 min");
             TimeUnitUpDown.Location = new Point(133, 106);
             TimeUnitUpDown.Name = "TimeUnitUpDown";
             TimeUnitUpDown.ReadOnly = true;
             TimeUnitUpDown.Size = new Size(141, 23);
             TimeUnitUpDown.TabIndex = 2;
+            TimeUnitUpDown.Text = "15 min";
+            TimeUnitUpDown.Wrap = true;
             TimeUnitUpDown.SelectedItemChanged += TimeUnitItemChanged;
             // 
-            // button2
+            // ExcelConvertButton
             // 
-            button2.Location = new Point(312, 223);
-            button2.Name = "button2";
-            button2.Size = new Size(181, 48);
-            button2.TabIndex = 3;
-            button2.Text = "Excel로 변환";
-            button2.UseVisualStyleBackColor = true;
+            ExcelConvertButton.Location = new Point(312, 223);
+            ExcelConvertButton.Name = "ExcelConvertButton";
+            ExcelConvertButton.Size = new Size(181, 48);
+            ExcelConvertButton.TabIndex = 3;
+            ExcelConvertButton.Text = "Excel로 변환";
+            ExcelConvertButton.UseVisualStyleBackColor = true;
+            ExcelConvertButton.MouseClick += ExcelConvertButtonClick;
             // 
             // text_preiod
             // 
@@ -90,7 +93,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(text_preiod);
-            Controls.Add(button2);
+            Controls.Add(ExcelConvertButton);
             Controls.Add(TimeUnitUpDown);
             Controls.Add(button1);
             Controls.Add(textBox1);
@@ -106,7 +109,7 @@
         private Button button1;
         private DomainUpDown TimeUnitUpDown;
         public UInt16[] m_dTime_unit = { 15, 30, 60 };
-        private Button button2;
+        private Button ExcelConvertButton;
         private TextBox text_preiod;
     }
 }

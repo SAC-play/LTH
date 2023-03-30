@@ -12,19 +12,24 @@ namespace LTH
 {
     public class SaveHerTime
     {
-        public void set_time_unit(double time_unit)
+        public bool set_time_unit(double time_unit)
         {
             int gap = (int)(time_unit - m_dTime_unit);
+            bool bEndTimeChanged = false;
+            DateTime temp_end_time = m_end_time.AddMinutes((double)gap);
 
-            if(gap >= 0)
+            if ((DateTime.Compare(DateTime.Now.AddMinutes(1), temp_end_time) < 0))
             {
-                m_end_time = m_end_time.AddMinutes((double)gap);
+                m_end_time = temp_end_time;
                 m_dTime_unit = time_unit;
+                bEndTimeChanged = true;
             }
             else
             {
                 m_dTime_unit = time_unit;
             }
+
+            return bEndTimeChanged;
         }
 
         public void start_timer()
