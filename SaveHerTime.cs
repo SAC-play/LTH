@@ -38,6 +38,13 @@ namespace LTH
             m_timer.Start();
         }
 
+        public class SaveHerTimeEventArgs : EventArgs
+        {
+            public DateTime BeginTime { get; set; }
+            public DateTime EndTime { get; set; }
+            public DateTime FutureEndTime { get; set; }
+        }
+
         private void on_tick(Object source, ElapsedEventArgs e)
         {
             //string begin_end_time = "begin time : " + m_begin_time.ToString() + ", end time : " + m_end_time.ToString();
@@ -53,7 +60,13 @@ namespace LTH
             {
                 if (this.m_elapsed != null)
                 {
-                    m_elapsed(this, EventArgs.Empty);
+                    SaveHerTimeEventArgs args = new SaveHerTimeEventArgs();
+
+                    args.BeginTime = m_begin_time;
+                    args.EndTime = m_end_time;
+                    args.FutureEndTime = m_end_time.AddMinutes(m_dTime_unit);
+
+                    m_elapsed(this, args);
                 }
 
                 //modify begin and end time

@@ -25,7 +25,9 @@ namespace LTH
             var begin_dt = m_sht_obj.BeginTime;
             var end_dt = m_sht_obj.EndTime;
 
-            text_preiod.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+            string str_period = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+            text_preiod.Text = str_period;
 
             m_sht_obj.start_timer();
 
@@ -89,15 +91,58 @@ namespace LTH
                 //work name input
                 if (textBox1.Text.Length != 0)
                 {
-                    //MessageBox.Show(textBox1.Text);
-
                     m_bInputStringLeastOnceInPeriod = true;
 
+                    string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+
+                    //MessageBox.Show(textBox1.Text);
+                    //if dict key is not existed in DictData, then save data and update time period list view.
+                    if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+                    {
+                        //make period text
+                        var begin_dt = m_sht_obj.BeginTime;
+                        var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
+
+                        string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+                        m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+
+
+                        //list view update
+                        string text_preiod = m_sht_obj.BeginTime.Hour.ToString("00") + ":" + m_sht_obj.BeginTime.Minute.ToString("00") + " ~ " + m_sht_obj.EndTime.Hour.ToString("00") + ":" + m_sht_obj.EndTime.Minute.ToString("00");
+
+                        TimePeriodListView.Items.Add(text_preiod);
+                        TimePeriodListView.Update();
+                    }
+
                     m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox1.Text.ToString());
+
+                    //list view update
+                    string context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+                    m_list_keys.Add(context_dict_key);
+
+
+                    TimePeriodListView.Items[TimePeriodListView.Items.Count-1].Selected = true;
+                    int selected_idx = TimePeriodListView.SelectedIndices[0];
+
+                    listview_workname_update(m_list_keys[selected_idx]);
 
                     textBox1.Text = "";
                 }
             }
+        }
+
+        private void listview_workname_update(string dict_key)
+        {
+            ListView_WorkName.BeginUpdate();
+            ListView_WorkName.Clear();
+
+            foreach (var item in m_excel_io.DictData[dict_key].list_datas)
+            {
+                ListView_WorkName.Items.Add(item);
+            }
+
+            ListView_WorkName.EndUpdate();
         }
 
         private void TimeUnitItemChanged(object sender, EventArgs e)
@@ -137,40 +182,25 @@ namespace LTH
             }
         }
 
-        delegate void TimerEventFiredDelegate();
+        delegate void TimerEventFiredDelegate(string period_text);
 
         public void on_elapsed(Object source, EventArgs e)
         {
-            //var sht_obj = source as SaveHerTime;
-            //MessageBox.Show("[on_elapsed]\nbegin time : "+sht_obj.BeginTime.ToString() + "\nend time : "+sht_obj.EndTime.ToString());
-
-            BeginInvoke(new TimerEventFiredDelegate(ui_work));
-        }
-
-        public void ui_work()
-        {
+            //var sht_obj = source as SaveHerTime
+            var param_args = e as SaveHerTime.SaveHerTimeEventArgs;
             string period_text = "";
 
             if (m_bInputStringLeastOnceInPeriod)
             {
-                //product time string
+                //product previous time string
                 {
-                    string time_input_string = "";
-                    time_input_string = m_sht_obj.BeginTime.Hour.ToString("00") + ":" + m_sht_obj.BeginTime.Minute.ToString("00") + "~" +
-                                        m_sht_obj.EndTime.Hour.ToString("00") + ":" + m_sht_obj.EndTime.Minute.ToString("00");
+                    string time_input_string = param_args.BeginTime.Hour.ToString("00") + ":" + param_args.BeginTime.Minute.ToString("00") + "~" +
+                                                param_args.EndTime.Hour.ToString("00") + ":" + param_args.EndTime.Minute.ToString("00");
 
                     m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), time_input_string, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
                 }
 
-                //make period text
-                {
-                    var begin_dt = m_sht_obj.EndTime;
-                    var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
-
-                    period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
-                }
-
-                m_list_period_work.Clear();
+                period_text = param_args.EndTime.Hour.ToString("00") + ":" + param_args.EndTime.Minute.ToString("00") + " ~ " + param_args.FutureEndTime.Hour.ToString("00") + ":" + param_args.FutureEndTime.Minute.ToString("00");
 
                 m_nExcel_std_row++;
 
@@ -178,37 +208,27 @@ namespace LTH
             }
             else
             {
-                //make period text
-                var begin_dt = m_sht_obj.BeginTime;
-                var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
-
-                period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+                period_text = param_args.BeginTime.Hour.ToString("00") + ":" + param_args.BeginTime.Minute.ToString("00") + " ~ " + param_args.FutureEndTime.Hour.ToString("00") + ":" + param_args.FutureEndTime.Minute.ToString("00");
             }
 
             m_bInputStringLeastOnceInPeriod = false;
 
+            BeginInvoke(new TimerEventFiredDelegate(ui_work),period_text);
+        }
+
+        public void ui_work(string period_text)
+        {
             text_preiod.Text = period_text;
         }
 
         private void ExcelConvertButtonClick(object sender, MouseEventArgs e)
         {
-            if (m_bInputStringLeastOnceInPeriod)
-            {
-                if(!m_excel_io.DictData.ContainsKey(m_nExcel_std_row.ToString()+ m_cExcel_stdTime_column.ToString()))
-                {
-                    //make period text
-                    var begin_dt = m_sht_obj.BeginTime;
-                    var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
-
-                    string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
-
-                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
-                }
-            }
-
-            m_bInputStringLeastOnceInPeriod = false;
-
             m_excel_io.sync_data();
+        }
+
+        private void TPListViewSelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         private Excel_io m_excel_io = new Excel_io();
@@ -216,7 +236,7 @@ namespace LTH
         private char m_cExcel_stdTime_column = 'B';
         private char m_cExcel_stdCtxt_column = 'C';
         private int m_nExcel_std_row = 0;
-        private List<string> m_list_period_work = new List<string>();
         private bool m_bInputStringLeastOnceInPeriod = true;
+        private List<string> m_list_keys = new List<string>();
     }
 }
