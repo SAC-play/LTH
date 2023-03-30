@@ -13,6 +13,7 @@ namespace LTH
             public int nRow;
             public string strColumn;
             public string strData;
+            public Microsoft.Office.Interop.Excel.XlRgbColor rgb_color;
         }
 
         public string create_file(string file_path_and_name)
@@ -77,7 +78,7 @@ namespace LTH
             return m_file_name;
         }
 
-        public void set_data(int row, string column, string data)
+        public void set_data(int row, string column, string data, Microsoft.Office.Interop.Excel.XlRgbColor parameter_color = Microsoft.Office.Interop.Excel.XlRgbColor.rgbWhite)
         {
             var dict_key = (row.ToString() + column);
 
@@ -86,6 +87,7 @@ namespace LTH
                 excel_io_data stData;
                 stData.nRow = row;
                 stData.strColumn = column;
+                stData.rgb_color = parameter_color;
 
                 string total_str = m_dict_data[dict_key].strData + "\n" + data;
 
@@ -99,6 +101,7 @@ namespace LTH
                 stData.nRow = row;
                 stData.strColumn = column;
                 stData.strData = data;
+                stData.rgb_color = parameter_color;
 
                 m_dict_data.Add(dict_key, stData);
             }
@@ -151,6 +154,7 @@ namespace LTH
                 {
                     excel_io_data stData = m_dict_data[key_item];
 
+                    cells[stData.nRow, stData.strColumn].Interior.Color = stData.rgb_color;
                     cells[stData.nRow, stData.strColumn] = stData.strData;
                 }
 
