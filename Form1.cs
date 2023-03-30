@@ -22,7 +22,7 @@ namespace LTH
             var begin_dt = m_sht_obj.BeginTime;
             var end_dt = m_sht_obj.EndTime;
 
-            Global.text_preiod.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00")+" ~ "+ end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+            text_preiod.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00")+" ~ "+ end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
 
             m_sht_obj.start_timer();
         }
@@ -58,19 +58,29 @@ namespace LTH
                 m_sht_obj.set_time_unit((double)60);
             }
         }
+
+        delegate void TimerEventFiredDelegate(string text);
+
         public void on_elapsed(Object source, EventArgs e)
         {
             var sht_obj = source as SaveHerTime;
 
             //MessageBox.Show("[on_elapsed]\nbegin time : "+sht_obj.BeginTime.ToString() + "\nend time : "+sht_obj.EndTime.ToString());
 
-            var begin_dt = m_sht_obj.EndTime;
-            var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
+            var begin_dt = sht_obj.EndTime;
+            var end_dt = sht_obj.EndTime.AddMinutes(sht_obj.TimeUnit);
 
-            //below statement is caused error.
-            //Global.text_preiod.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+            string preiod_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00"); ;
+
+            BeginInvoke(new TimerEventFiredDelegate(ui_work), preiod_text);
 
             sht_obj.ChangeBeginTIme = true;
+        }
+
+        public void ui_work(string period_text)
+        {
+            //below statement is caused error.
+            text_preiod.Text = period_text;
         }
 
         private Excel_io m_excel_io = new Excel_io();

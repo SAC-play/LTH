@@ -1,9 +1,5 @@
 ﻿namespace LTH
 {
-    static class Global
-    {
-        public static TextBox text_preiod;
-    }
     partial class Form1
     {
         /// <summary>
@@ -36,7 +32,7 @@
             button1 = new Button();
             TimeUnitUpDown = new DomainUpDown();
             button2 = new Button();
-            Global.text_preiod = new TextBox();
+            text_preiod = new TextBox();
             SuspendLayout();
             // 
             // textBox1
@@ -81,19 +77,19 @@
             // 
             // text_preiod
             // 
-            Global.text_preiod.BackColor = SystemColors.Control;
-            Global.text_preiod.Location = new Point(133, 135);
-            Global.text_preiod.Name = "text_preiod";
-            Global.text_preiod.ReadOnly = true;
-            Global.text_preiod.Size = new Size(256, 23);
-            Global.text_preiod.TabIndex = 4;
+            text_preiod.BackColor = SystemColors.Control;
+            text_preiod.Location = new Point(133, 135);
+            text_preiod.Name = "text_preiod";
+            text_preiod.ReadOnly = true;
+            text_preiod.Size = new Size(256, 23);
+            text_preiod.TabIndex = 4;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(Global.text_preiod);
+            Controls.Add(text_preiod);
             Controls.Add(button2);
             Controls.Add(TimeUnitUpDown);
             Controls.Add(button1);
@@ -111,5 +107,6 @@
         private DomainUpDown TimeUnitUpDown;
         public UInt16[] m_dTime_unit = { 15, 30, 60 };
         private Button button2;
+        private TextBox text_preiod;
     }
 }
