@@ -14,7 +14,7 @@ namespace LTH
             m_excel_io.create_file("업무일지_" + mon_dt.Month.ToString("00") + mon_dt.Day.ToString("00") + ".xlsx");
 
 #if true //For test, if you want to end time set 1 min later, then false.
-            m_sht_obj.set_time_unit((double)15);
+            m_sht_obj.set_time_unit((double)10);
             m_sht_obj.calculate_start_time();
 #else
             m_sht_obj.set_time_unit((double)1);
@@ -105,18 +105,23 @@ namespace LTH
             bool bEndTimeChanged = false;
             if (TimeUnitUpDown.SelectedItem.ToString() == m_dTime_unit[0].ToString() + " min")
             {
-                //15 min
+                //10 min
                 bEndTimeChanged = m_sht_obj.set_time_unit((double)(m_dTime_unit[0]));
             }
             else if (TimeUnitUpDown.SelectedItem.ToString() == m_dTime_unit[1].ToString() + " min")
             {
-                //30 min
+                //15 min
                 bEndTimeChanged = m_sht_obj.set_time_unit((double)(m_dTime_unit[1]));
             }
             else if (TimeUnitUpDown.SelectedItem.ToString() == m_dTime_unit[2].ToString() + " min")
             {
+                //30 min
+                bEndTimeChanged = m_sht_obj.set_time_unit((double)(m_dTime_unit[2]));
+            }
+            else if (TimeUnitUpDown.SelectedItem.ToString() == m_dTime_unit[3].ToString() + " min")
+            {
                 //60 min
-                bEndTimeChanged = m_sht_obj.set_time_unit((double)60);
+                bEndTimeChanged = m_sht_obj.set_time_unit((double)(m_dTime_unit[3]));
             }
             else
             {
@@ -187,6 +192,22 @@ namespace LTH
 
         private void ExcelConvertButtonClick(object sender, MouseEventArgs e)
         {
+            if (m_bInputStringLeastOnceInPeriod)
+            {
+                if(!m_excel_io.DictData.ContainsKey(m_nExcel_std_row.ToString()+ m_cExcel_stdTime_column.ToString()))
+                {
+                    //make period text
+                    var begin_dt = m_sht_obj.BeginTime;
+                    var end_dt = m_sht_obj.EndTime.AddMinutes(m_sht_obj.TimeUnit);
+
+                    string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+            }
+
+            m_bInputStringLeastOnceInPeriod = false;
+
             m_excel_io.sync_data();
         }
 
@@ -196,6 +217,6 @@ namespace LTH
         private char m_cExcel_stdCtxt_column = 'C';
         private int m_nExcel_std_row = 0;
         private List<string> m_list_period_work = new List<string>();
-        private bool m_bInputStringLeastOnceInPeriod = false;
+        private bool m_bInputStringLeastOnceInPeriod = true;
     }
 }

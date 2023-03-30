@@ -37,9 +37,9 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(133, 164);
+            textBox1.Location = new Point(212, 164);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(500, 23);
+            textBox1.Size = new Size(421, 23);
             textBox1.TabIndex = 0;
             textBox1.KeyDown += textBox_KeyDown;
             // 
@@ -59,12 +59,13 @@
             TimeUnitUpDown.Items.Add("60 min");
             TimeUnitUpDown.Items.Add("30 min");
             TimeUnitUpDown.Items.Add("15 min");
-            TimeUnitUpDown.Location = new Point(133, 106);
+            TimeUnitUpDown.Items.Add("10 min");
+            TimeUnitUpDown.Location = new Point(212, 106);
             TimeUnitUpDown.Name = "TimeUnitUpDown";
             TimeUnitUpDown.ReadOnly = true;
             TimeUnitUpDown.Size = new Size(141, 23);
             TimeUnitUpDown.TabIndex = 2;
-            TimeUnitUpDown.Text = "15 min";
+            TimeUnitUpDown.Text = "10 min";
             TimeUnitUpDown.Wrap = true;
             TimeUnitUpDown.SelectedItemChanged += TimeUnitItemChanged;
             // 
@@ -81,10 +82,10 @@
             // text_preiod
             // 
             text_preiod.BackColor = SystemColors.Control;
-            text_preiod.Location = new Point(133, 135);
+            text_preiod.Location = new Point(212, 135);
             text_preiod.Name = "text_preiod";
             text_preiod.ReadOnly = true;
-            text_preiod.Size = new Size(256, 23);
+            text_preiod.Size = new Size(141, 23);
             text_preiod.TabIndex = 4;
             // 
             // Form1
@@ -108,7 +109,7 @@
         private TextBox textBox1;
         private Button button1;
         private DomainUpDown TimeUnitUpDown;
-        public UInt16[] m_dTime_unit = { 15, 30, 60 };
+        public UInt16[] m_dTime_unit = { 10, 15, 30, 60 };
         private Button ExcelConvertButton;
         private TextBox text_preiod;
     }
