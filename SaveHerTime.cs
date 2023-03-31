@@ -58,6 +58,15 @@ namespace LTH
             if (e.SignalTime.Hour >= m_end_time.Hour &&
                 e.SignalTime.Minute >= m_end_time.Minute)
             {
+                //modify begin and end time
+
+                if (m_bChangeBeginTime)
+                {
+                    m_begin_time = m_end_time;
+                }
+
+                m_end_time = m_end_time.AddMinutes(m_dTime_unit);
+
                 if (this.m_elapsed != null)
                 {
                     SaveHerTimeEventArgs args = new SaveHerTimeEventArgs();
@@ -68,15 +77,6 @@ namespace LTH
 
                     m_elapsed(this, args);
                 }
-
-                //modify begin and end time
-
-                if(m_bChangeBeginTime)
-                {
-                    m_begin_time = m_end_time;
-                }
-
-                m_end_time = m_end_time.AddMinutes(m_dTime_unit);
 
                 m_bChangeBeginTime = false;
             }
