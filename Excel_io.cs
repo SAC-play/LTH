@@ -102,6 +102,11 @@ namespace LTH
 
         public bool sync_data()
         {
+            if(m_dict_data.Count == 0)
+            {
+                return false;
+            }
+
             Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
 
             if (excelApp == null)
