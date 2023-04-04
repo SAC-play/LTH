@@ -16,7 +16,7 @@ namespace LTH
 
             m_excel_io.create_file("诀公老瘤_" + mon_dt.Month.ToString("00") + mon_dt.Day.ToString("00") + ".xlsx");
 
-#if true //For test, if you want to end time set 1 min later, then false.
+#if false //For test, if you want to end time set 1 min later, then false.
             m_sht_obj.set_time_unit((double)10);
             m_sht_obj.calculate_start_time();
 #else
@@ -66,10 +66,44 @@ namespace LTH
             }
 
             m_cExcel_stdCtxt_column = (char)((int)m_cExcel_stdTime_column + 1);
-            m_nExcel_std_row = 3;
 
-            m_excel_io.set_data(1, "A", "诀公老瘤", Microsoft.Office.Interop.Excel.XlRgbColor.rgbGreen);
-            m_excel_io.set_data((m_nExcel_std_row - 1), m_cExcel_stdCtxt_column.ToString(), DateTime.Now.ToString("MM岿 dd老 ddd"), Microsoft.Office.Interop.Excel.XlRgbColor.rgbDarkGray);
+
+#if true
+            string auto_save_file_path_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + m_auto_save_file_name;
+
+            if (System.IO.File.Exists(auto_save_file_path_name))
+            {
+                StreamReader file = File.OpenText(auto_save_file_path_name);
+                JsonTextReader textReader = new JsonTextReader(file);
+                JObject json_object = (JObject)JToken.ReadFrom(textReader);
+
+                foreach (JProperty obj in json_object.Properties())
+                {
+                    string dict_key = obj.Name;
+
+                    int nRow = Int32.Parse(dict_key[0].ToString());
+
+                    Microsoft.Office.Interop.Excel.XlRgbColor color = obj.Value["color"].ToObject<Microsoft.Office.Interop.Excel.XlRgbColor>();
+
+                    foreach(var item in (JArray)obj.Value["data"])
+                    {
+                        m_excel_io.set_data(nRow, dict_key[1].ToString(),item.ToString(), color);
+                    }
+
+                    m_nExcel_std_row = nRow+1;
+                }
+
+                file.Close();
+            }
+            else
+            {
+
+                m_nExcel_std_row = 3;
+
+                m_excel_io.set_data(1, "A", "诀公老瘤", Microsoft.Office.Interop.Excel.XlRgbColor.rgbGreen);
+                m_excel_io.set_data((m_nExcel_std_row - 1), m_cExcel_stdCtxt_column.ToString(), DateTime.Now.ToString("MM岿 dd老 ddd"), Microsoft.Office.Interop.Excel.XlRgbColor.rgbDarkGray);
+            }
+#endif
 
             m_dt_beginTime = m_sht_obj.BeginTime;
             m_dt_endTime = m_sht_obj.EndTime;
@@ -308,6 +342,13 @@ namespace LTH
         private void ExcelConvertButtonClick(object sender, MouseEventArgs e)
         {
             m_excel_io.sync_data();
+
+            string auto_save_file_path_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + m_auto_save_file_name;
+
+            if (System.IO.File.Exists(auto_save_file_path_name))
+            {
+                File.Delete(auto_save_file_path_name);
+            }
         }
 
         private void TPListViewSelectedIndexChanged(object sender, EventArgs e)
@@ -325,18 +366,31 @@ namespace LTH
         private void auto_save(Object source, ElapsedEventArgs e)
         {
             var dict_data = m_excel_io.DictData;
+
+            if(dict_data.Count == 0)
+            {
+                return;
+            }
+
             JObject json_temp_data = new JObject();
 
             foreach(var item in m_excel_io.DictData)
             {
                 string[] str_array = item.Value.list_datas.ToArray();
 
-                json_temp_data.Add(item.Key,JArray.FromObject(str_array));
+                JObject item_obj = new JObject(
+                    new JProperty("data", str_array),
+                    new JProperty("color", (int)item.Value.rgb_color)
+                );
+
+                json_temp_data.Add(item.Key,item_obj);
             }
 
-            string file_path_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + "auto_save_file.json";
+            {
+                string auto_save_file_path_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + m_auto_save_file_name;
 
-            File.WriteAllText(file_path_name, json_temp_data.ToString());
+                File.WriteAllText(auto_save_file_path_name, json_temp_data.ToString());
+            }
         }
 
         private Excel_io m_excel_io = new Excel_io();
@@ -350,5 +404,6 @@ namespace LTH
         private DateTime m_dt_beginTime;
         private DateTime m_dt_endTime;
         private System.Timers.Timer m_timer = new System.Timers.Timer(60000);
+        private string m_auto_save_file_name = "auto_save_file.json";
     }
 }
