@@ -1,5 +1,8 @@
+using System.Text.Json.Nodes;
 using System.Timers;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LTH
 {
@@ -70,7 +73,14 @@ namespace LTH
 
             m_dt_beginTime = m_sht_obj.BeginTime;
             m_dt_endTime = m_sht_obj.EndTime;
-            m_dt_future_endTime = m_dt_endTime.AddMinutes(m_sht_obj.TimeUnit);
+
+            m_timer.Elapsed += auto_save;
+            m_timer.Start();
+        }
+
+        ~Form1()
+        {
+            m_timer.Stop();
         }
 
         private void MouseClickOk(object sender, EventArgs e)
@@ -275,7 +285,6 @@ namespace LTH
 
             m_dt_beginTime = param_args.BeginTime;
             m_dt_endTime = param_args.EndTime;
-            m_dt_future_endTime = param_args.FutureEndTime;
 
             period_text = m_dt_beginTime.Hour.ToString("00") + ":" + m_dt_beginTime.Minute.ToString("00") + " ~ " + m_dt_endTime.Hour.ToString("00") + ":" + m_dt_endTime.Minute.ToString("00");
 
@@ -313,6 +322,23 @@ namespace LTH
             }
         }
 
+        private void auto_save(Object source, ElapsedEventArgs e)
+        {
+            var dict_data = m_excel_io.DictData;
+            JObject json_temp_data = new JObject();
+
+            foreach(var item in m_excel_io.DictData)
+            {
+                string[] str_array = item.Value.list_datas.ToArray();
+
+                json_temp_data.Add(item.Key,JArray.FromObject(str_array));
+            }
+
+            string file_path_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + "auto_save_file.json";
+
+            File.WriteAllText(file_path_name, json_temp_data.ToString());
+        }
+
         private Excel_io m_excel_io = new Excel_io();
         private SaveHerTime m_sht_obj = new SaveHerTime();
         private char m_cExcel_stdTime_column = 'B';
@@ -323,6 +349,6 @@ namespace LTH
         private int selected_idx = -1;
         private DateTime m_dt_beginTime;
         private DateTime m_dt_endTime;
-        private DateTime m_dt_future_endTime;
+        private System.Timers.Timer m_timer = new System.Timers.Timer(60000);
     }
 }
