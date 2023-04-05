@@ -51,8 +51,14 @@ namespace LTH
 #else
             _Worksheet workSheet = wb.Worksheets[1];
 #endif
-
-            ws.Name = "업무일지";
+            if(m_sheet_name != "")
+            {
+                ws.Name = m_sheet_name;
+            }
+            else
+            {
+                ws.Name = "업무일지";
+            }
 
             m_file_name = AppDomain.CurrentDomain.BaseDirectory.ToString() + file_path_and_name;
 
@@ -126,7 +132,18 @@ namespace LTH
             var wb = workbooks.Open(m_file_name);
 
             var worksheets = wb.Worksheets;
-            Microsoft.Office.Interop.Excel._Worksheet ws = worksheets[1];
+            int ws_idx = 1;
+
+            for(int i = 1; i <= worksheets.Count; i++)
+            {
+                if (worksheets[i].Name == m_sheet_name)
+                {
+                    ws_idx = i;
+                    break;
+                }
+            }
+
+            Microsoft.Office.Interop.Excel._Worksheet ws = worksheets[ws_idx];
 
             if(ws == null)
             {
@@ -228,7 +245,19 @@ namespace LTH
             get => m_dict_data;
         }
 
+        public void clear_dictionary()
+        {
+            m_dict_data.Clear();
+        }
+
+        public string mySheet
+        {
+            get => m_sheet_name;
+            set => m_sheet_name = value;
+        }
+
         private Dictionary<string, excel_io_data> m_dict_data = new Dictionary<string, excel_io_data>();
         private string m_file_name = "";
+        private string m_sheet_name = "";
     }
 }
