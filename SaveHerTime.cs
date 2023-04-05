@@ -121,6 +121,47 @@ namespace LTH
             }
         }
 
+        public bool calculate_start_time(DateTime begin_time, DateTime end_time)
+        {
+            bool bChanged = false;
+
+            DateTime dt_now = DateTime.Now;
+
+            if(DateTime.Compare(dt_now,begin_time) <= 0)
+            {
+                m_begin_time = new DateTime(dt_now.Year, dt_now.Month, dt_now.Day, dt_now.Hour, dt_now.Minute, 0);
+                bChanged = true;
+            }
+            else if((DateTime.Compare(dt_now,begin_time) > 0) && (DateTime.Compare(dt_now,end_time) <= 0))
+            {
+                m_begin_time = begin_time;
+                m_end_time = end_time;
+            }
+            else
+            {
+                bool bContinue = true;
+                DateTime dt_end_time = new DateTime(dt_now.Year, dt_now.Month, dt_now.Day, dt_now.Hour,0,0);
+                DateTime dt_now_plus_1min = dt_now.AddMinutes(1);
+
+                while (bContinue)
+                {
+                    dt_end_time = dt_end_time.AddMinutes(10);
+
+                    if (DateTime.Compare(dt_now_plus_1min,dt_end_time) < 0)
+                    {
+                        bContinue = false;
+                    }
+                }
+
+                m_begin_time = end_time;
+                m_end_time = dt_end_time;
+
+                bChanged = true;
+            }
+
+            return bChanged;
+        }
+
         public DateTime find_monday_date()
         {
             DateTime dt_now = DateTime.Now;
