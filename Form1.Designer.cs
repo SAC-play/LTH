@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
+            textBox_workname = new TextBox();
             button1 = new Button();
             TimeUnitUpDown = new DomainUpDown();
             ExcelConvertButton = new Button();
-            text_preiod = new TextBox();
+            textBox_period = new TextBox();
             TimePeriodListView = new ListView();
             label1 = new Label();
             label_work_name = new Label();
             ListView_WorkName = new ListView();
             SuspendLayout();
             // 
-            // textBox1
+            // textBox_workname
             // 
-            textBox1.Location = new Point(327, 164);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(306, 23);
-            textBox1.TabIndex = 0;
-            textBox1.KeyDown += textBox_KeyDown;
+            textBox_workname.Location = new Point(327, 164);
+            textBox_workname.Name = "textBox_workname";
+            textBox_workname.Size = new Size(306, 23);
+            textBox_workname.TabIndex = 0;
+            textBox_workname.KeyDown += textBox_KeyDown;
             // 
             // button1
             // 
@@ -83,14 +83,14 @@
             ExcelConvertButton.UseVisualStyleBackColor = true;
             ExcelConvertButton.MouseClick += ExcelConvertButtonClick;
             // 
-            // text_preiod
+            // textBox_period
             // 
-            text_preiod.BackColor = SystemColors.Control;
-            text_preiod.Location = new Point(327, 135);
-            text_preiod.Name = "text_preiod";
-            text_preiod.ReadOnly = true;
-            text_preiod.Size = new Size(141, 23);
-            text_preiod.TabIndex = 4;
+            textBox_period.BackColor = SystemColors.Control;
+            textBox_period.Location = new Point(327, 135);
+            textBox_period.Name = "textBox_period";
+            textBox_period.ReadOnly = true;
+            textBox_period.Size = new Size(141, 23);
+            textBox_period.TabIndex = 4;
             // 
             // TimePeriodListView
             // 
@@ -144,11 +144,11 @@
             Controls.Add(ListView_WorkName);
             Controls.Add(label1);
             Controls.Add(TimePeriodListView);
-            Controls.Add(text_preiod);
+            Controls.Add(textBox_period);
             Controls.Add(ExcelConvertButton);
             Controls.Add(TimeUnitUpDown);
             Controls.Add(button1);
-            Controls.Add(textBox1);
+            Controls.Add(textBox_workname);
             Name = "Form1";
             Text = "LetsGoHaeNi";
             ResumeLayout(false);
@@ -157,12 +157,12 @@
 
         #endregion
 
-        private TextBox textBox1;
+        private TextBox textBox_workname;
         private Button button1;
         private DomainUpDown TimeUnitUpDown;
         public UInt16[] m_dTime_unit = { 10, 15, 30, 60 };
         private Button ExcelConvertButton;
-        private TextBox text_preiod;
+        private TextBox textBox_period;
         private ListView TimePeriodListView;
         private Label label1;
         private Label label_work_name;
