@@ -442,7 +442,7 @@ namespace LTH
         private void initialize_timer()
         {
 
-#if false //For test, if you want to end time set 1 min later, then false.
+#if true //For test, if you want to end time set 1 min later, then false.
             if (m_nExcel_std_row > 3)
             {
                 string time_dict_key = (m_nExcel_std_row - 1).ToString() + m_cExcel_stdTime_column.ToString();
