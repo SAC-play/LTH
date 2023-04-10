@@ -15,7 +15,7 @@ namespace LTH
             var mon_dt = m_sht_obj.find_monday_date();
 
             m_excel_io.mySheet = mon_dt.Month.ToString("00") + mon_dt.Day.ToString("00");
-            m_excel_io.create_file("업무일지_" + mon_dt.Month.ToString("00")+"월.xlsx");
+            m_excel_io.create_file("업무일지_" + mon_dt.Month.ToString("00") + "월.xlsx");
 
             initialize_cell_position();
 
@@ -27,7 +27,7 @@ namespace LTH
 
             string str_period = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
 
-            text_preiod.Text = str_period;
+            textBox_period.Text = str_period;
 
             var list_keys = m_excel_io.DictData.Keys.ToList();
             var excel_dict_data = m_excel_io.DictData;
@@ -36,7 +36,7 @@ namespace LTH
             foreach (var key in list_keys)
             {
                 // time period key
-                if((Int32.Parse(key[0].ToString()) >= 3) && (key[1] == m_cExcel_stdTime_column))
+                if ((Int32.Parse(key[0].ToString()) >= 3) && (key[1] == m_cExcel_stdTime_column))
                 {
                     TimePeriodListView.Items.Add(excel_dict_data[key].list_datas[0]);
                 }
@@ -48,7 +48,7 @@ namespace LTH
                 }
             }
 
-            if(TimePeriodListView.Items.Count > 0)
+            if (TimePeriodListView.Items.Count > 0)
             {
                 TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
             }
@@ -63,71 +63,227 @@ namespace LTH
         {
             m_bInputStringLeastOnceInPeriod = true;
 
-            //add context into save her time dictionary
-            m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox1.Text.ToString());
+            var begin_dt = m_dt_beginTime;
+            var end_dt = m_dt_endTime;
 
-            string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+            //make period text
 
-            //MessageBox.Show(textBox1.Text);
-            //if dict key is not existed in DictData, then save data and update time period list view.
-            if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+            //lunch time calculate
+            if ((begin_dt.Hour < 12) && (end_dt.Hour > 13))
             {
-                //make period text
-                var begin_dt = m_dt_beginTime;
-                var end_dt = m_dt_endTime;
+                //before lunch time
+                string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
 
-                string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
-
-                TimePeriodListView.Items.Add(period_text);
-
-                m_sht_obj.ChangeBeginTIme = true;
-
-                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
-            }
-
-            //list view update
-            //make context list key
-            string context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
-
-            if (!m_list_context_keys.Contains(context_dict_key))
-            {
-                m_list_context_keys.Add(context_dict_key);
-            }
-
-
-            if (TimePeriodListView.Items.Count == 1)
-            {
-                selected_idx = 0;
-                listview_workname_update(m_list_context_keys[0]);
-            }
-            else
-            {
-                if (selected_idx != (TimePeriodListView.Items.Count - 1))
+                if (!m_excel_io.DictData.ContainsKey(time_dict_key))
                 {
-                    TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
+                    string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ 12:00";
+
+                    TimePeriodListView.Items.Add(period_text);
+
+                    m_sht_obj.ChangeBeginTIme = true;
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+
+                //list view update
+                //make context list key
+                string context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+
+                if (!m_list_context_keys.Contains(context_dict_key))
+                {
+                    m_list_context_keys.Add(context_dict_key);
+                }
+
+                //add context into save her time dictionary
+                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox_workname.Text.ToString());
+                m_nExcel_std_row++;
+
+                //after lunch time
+                time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+
+                if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+                {
+                    string period_text = "13:00 ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+                    TimePeriodListView.Items.Add(period_text);
+
+                    m_sht_obj.ChangeBeginTIme = true;
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+                //list view update
+                //make context list key
+                context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+
+                if (!m_list_context_keys.Contains(context_dict_key))
+                {
+                    m_list_context_keys.Add(context_dict_key);
+                }
+
+                //add context into save her time dictionary
+                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox_workname.Text.ToString());
+
+
+                if (TimePeriodListView.Items.Count == 1)
+                {
+                    selected_idx = 0;
+                    listview_workname_update(m_list_context_keys[0]);
                 }
                 else
                 {
-                    listview_workname_update(m_list_context_keys[selected_idx]);
+                    if (selected_idx != (TimePeriodListView.Items.Count - 1))
+                    {
+                        TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
+                    }
+                    else
+                    {
+                        listview_workname_update(m_list_context_keys[selected_idx]);
+                    }
                 }
+
+                m_sht_obj.BeginTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 0, 0);
+                m_dt_beginTime = m_sht_obj.BeginTime;
+            }
+            //dinner time
+            else if ((begin_dt.Hour < 18) && (end_dt.Hour > 19))
+            {
+                //before dinner time
+                string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+
+                if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+                {
+                    string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ 18:00";
+
+                    TimePeriodListView.Items.Add(period_text);
+
+                    m_sht_obj.ChangeBeginTIme = true;
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+
+                //list view update
+                //make context list key
+                string context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+
+                if (!m_list_context_keys.Contains(context_dict_key))
+                {
+                    m_list_context_keys.Add(context_dict_key);
+                }
+
+                //add context into save her time dictionary
+                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox_workname.Text.ToString());
+                m_nExcel_std_row++;
+
+                //after lunch time
+                time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+
+                if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+                {
+                    string period_text = "19:00 ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+                    TimePeriodListView.Items.Add(period_text);
+
+                    m_sht_obj.ChangeBeginTIme = true;
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+                //list view update
+                //make context list key
+                context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+
+                if (!m_list_context_keys.Contains(context_dict_key))
+                {
+                    m_list_context_keys.Add(context_dict_key);
+                }
+
+                //add context into save her time dictionary
+                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox_workname.Text.ToString());
+
+
+                if (TimePeriodListView.Items.Count == 1)
+                {
+                    selected_idx = 0;
+                    listview_workname_update(m_list_context_keys[0]);
+                }
+                else
+                {
+                    if (selected_idx != (TimePeriodListView.Items.Count - 1))
+                    {
+                        TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
+                    }
+                    else
+                    {
+                        listview_workname_update(m_list_context_keys[selected_idx]);
+                    }
+                }
+
+                m_sht_obj.BeginTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 19, 0, 0);
+                m_dt_beginTime = m_sht_obj.BeginTime;
+            }
+            else
+            {
+                //add context into save her time dictionary
+                m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdCtxt_column.ToString(), textBox_workname.Text.ToString());
+
+                string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
+
+                //MessageBox.Show(textBox1.Text);
+                //if dict key is not existed in DictData, then save data and update time period list view.
+                if (!m_excel_io.DictData.ContainsKey(time_dict_key))
+                {
+                    string period_text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+
+                    TimePeriodListView.Items.Add(period_text);
+
+                    m_sht_obj.ChangeBeginTIme = true;
+
+                    m_excel_io.set_data(m_nExcel_std_row, m_cExcel_stdTime_column.ToString(), period_text, Microsoft.Office.Interop.Excel.XlRgbColor.rgbLightGray);
+                }
+
+                //list view update
+                //make context list key
+                string context_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdCtxt_column.ToString();
+
+                if (!m_list_context_keys.Contains(context_dict_key))
+                {
+                    m_list_context_keys.Add(context_dict_key);
+                }
+
+
+                if (TimePeriodListView.Items.Count == 1)
+                {
+                    selected_idx = 0;
+                    listview_workname_update(m_list_context_keys[0]);
+                }
+                else
+                {
+                    if (selected_idx != (TimePeriodListView.Items.Count - 1))
+                    {
+                        TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
+                    }
+                    else
+                    {
+                        listview_workname_update(m_list_context_keys[selected_idx]);
+                    }
+                }
+
+                /*
+                TimePeriodListView.BeginUpdate();
+                TimePeriodListView.Items.Add(text_preiod);
+                TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
+                TimePeriodListView.EndUpdate();
+
+                ListView_WorkName.Items.Add(textBox1.Text.ToString());
+                */
             }
 
-            /*
-            TimePeriodListView.BeginUpdate();
-            TimePeriodListView.Items.Add(text_preiod);
-            TimePeriodListView.Items[TimePeriodListView.Items.Count - 1].Selected = true;
-            TimePeriodListView.EndUpdate();
-
-            ListView_WorkName.Items.Add(textBox1.Text.ToString());
-            */
-
-            textBox1.Text = "";
+            textBox_workname.Text = "";
         }
 
         private void MouseClickOk(object sender, EventArgs e)
         {
             //work name input
-            if (textBox1.Text.Length != 0)
+            if (textBox_workname.Text.Length != 0)
             {
                 handle_work_name();
             }
@@ -190,7 +346,7 @@ namespace LTH
                 var begin_dt = m_sht_obj.BeginTime;
                 var end_dt = m_sht_obj.EndTime;
 
-                text_preiod.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
+                textBox_period.Text = begin_dt.Hour.ToString("00") + ":" + begin_dt.Minute.ToString("00") + " ~ " + end_dt.Hour.ToString("00") + ":" + end_dt.Minute.ToString("00");
             }
         }
 
@@ -221,7 +377,7 @@ namespace LTH
 
         public void ui_work(string period_text)
         {
-            text_preiod.Text = period_text;
+            textBox_period.Text = period_text;
         }
 
         private void ExcelConvertButtonClick(object sender, MouseEventArgs e)
@@ -243,7 +399,7 @@ namespace LTH
 
         private void TPListViewSelectedIndexChanged(object sender, EventArgs e)
         {
-            if((TimePeriodListView.SelectedItems.Count > 0))
+            if ((TimePeriodListView.SelectedItems.Count > 0))
             {
                 listview_workname_update(m_list_context_keys[TimePeriodListView.SelectedIndices[0]]);
 
@@ -257,14 +413,14 @@ namespace LTH
         {
             var dict_data = m_excel_io.DictData;
 
-            if(dict_data.Count == 0)
+            if (dict_data.Count == 0)
             {
                 return;
             }
 
             JObject json_temp_data = new JObject();
 
-            foreach(var item in m_excel_io.DictData)
+            foreach (var item in m_excel_io.DictData)
             {
                 string[] str_array = item.Value.list_datas.ToArray();
 
@@ -273,7 +429,7 @@ namespace LTH
                     new JProperty("color", (int)item.Value.rgb_color)
                 );
 
-                json_temp_data.Add(item.Key,item_obj);
+                json_temp_data.Add(item.Key, item_obj);
             }
 
             {
@@ -286,8 +442,8 @@ namespace LTH
         private void initialize_timer()
         {
 
-#if true //For test, if you want to end time set 1 min later, then false.
-            if(m_nExcel_std_row > 3)
+#if false //For test, if you want to end time set 1 min later, then false.
+            if (m_nExcel_std_row > 3)
             {
                 string time_dict_key = (m_nExcel_std_row - 1).ToString() + m_cExcel_stdTime_column.ToString();
                 string str_time = m_excel_io.DictData[time_dict_key].list_datas[0].ToString();
@@ -299,7 +455,7 @@ namespace LTH
                 DateTime my_begin_dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, Int32.Parse(begin_hour), Int32.Parse(begin_min), 0);
                 DateTime my_end_dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, Int32.Parse(end_hour), Int32.Parse(end_min), 0);
 
-                if(!m_sht_obj.calculate_start_time(my_begin_dt, my_end_dt))
+                if (!m_sht_obj.calculate_start_time(my_begin_dt, my_end_dt))
                 {
                     m_nExcel_std_row--;
                 }
@@ -311,7 +467,9 @@ namespace LTH
             }
 #else
             m_sht_obj.set_time_unit((double)1);
-            m_sht_obj.EndTime = DateTime.Now.AddMinutes(1);
+            //m_sht_obj.EndTime = DateTime.Now.AddMinutes(1);
+            m_sht_obj.BeginTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 17, 50, 0);
+            m_sht_obj.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 20, 0, 0);
 #endif
             m_sht_obj.add_elapsed_handler(on_elapsed);
 
