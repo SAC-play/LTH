@@ -69,7 +69,7 @@ namespace LTH
             //make period text
 
             //lunch time calculate
-            if ((begin_dt.Hour < 12) && (end_dt.Hour > 13))
+            if ((begin_dt.Hour < 12) && (end_dt.Hour >= 13))
             {
                 //before lunch time
                 string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
@@ -145,7 +145,7 @@ namespace LTH
                 m_dt_beginTime = m_sht_obj.BeginTime;
             }
             //dinner time
-            else if ((begin_dt.Hour < 18) && (end_dt.Hour > 19))
+            else if ((begin_dt.Hour < 18) && (end_dt.Hour >= 19))
             {
                 //before dinner time
                 string time_dict_key = m_nExcel_std_row.ToString() + m_cExcel_stdTime_column.ToString();
@@ -468,8 +468,8 @@ namespace LTH
 #else
             m_sht_obj.set_time_unit((double)1);
             //m_sht_obj.EndTime = DateTime.Now.AddMinutes(1);
-            m_sht_obj.BeginTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 17, 50, 0);
-            m_sht_obj.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 20, 0, 0);
+            m_sht_obj.BeginTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 9, 10, 0);
+            m_sht_obj.EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 0);
 #endif
             m_sht_obj.add_elapsed_handler(on_elapsed);
 
