@@ -88,28 +88,40 @@ namespace LTH
 
             if(dt.Hour >= 9)
             {
-                if(dt.Minute >=0 && dt.Minute < 15)
+                if(dt.Minute >=0 && dt.Minute < 10)
                 {
                     m_begin_time = new DateTime(dt.Year,dt.Month,dt.Day,9,0,0);
                     m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour,0,0);
                     m_end_time = m_end_time.AddMinutes(m_dTime_unit);
                 }
-                else if(dt.Minute >= 15 && dt.Minute < 30)
+                else if(dt.Minute >= 10 && dt.Minute < 20)
                 {
                     m_begin_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
-                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour,15, 0);
+                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour,10, 0);
                     m_end_time = m_end_time.AddMinutes(m_dTime_unit);
                 }
-                else if(dt.Minute >= 30 && dt.Minute < 45 )
+                else if(dt.Minute >= 20 && dt.Minute < 30 )
+                {
+                    m_begin_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
+                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 20, 0);
+                    m_end_time = m_end_time.AddMinutes(m_dTime_unit);
+                }
+                else if (dt.Minute >= 30 && dt.Minute < 40)
                 {
                     m_begin_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
                     m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 30, 0);
                     m_end_time = m_end_time.AddMinutes(m_dTime_unit);
                 }
+                else if (dt.Minute >= 40 && dt.Minute < 50)
+                {
+                    m_begin_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
+                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 40, 0);
+                    m_end_time = m_end_time.AddMinutes(m_dTime_unit);
+                }
                 else
                 {
                     m_begin_time = new DateTime(dt.Year, dt.Month, dt.Day, 9, 0, 0);
-                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 45, 0);
+                    m_end_time = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 50, 0);
                     m_end_time = m_end_time.AddMinutes(m_dTime_unit);
                 }
             }
